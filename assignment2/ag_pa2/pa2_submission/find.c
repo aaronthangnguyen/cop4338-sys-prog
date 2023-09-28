@@ -122,9 +122,8 @@ int main(int argc, char **argv)
 			sprintf(initial, "%d. ", i + 1);
 		// search for pattern in current line
 		char *first_occurrence = strstr_w_option(lineptr[i], pattern, option);
-
 		if ((option & FIRST) && (first_occurrence != NULL))
-			sprintf(initial + strlen(initial), "@%d: ", first_occurrence - lineptr[i]);
+			sprintf(initial + strlen(initial), "@%d: ", strlen(lineptr[i]) - strlen(first_occurrence));
 
 		// if (option & PARTIAL)
 		// 	lineptr[i] = truncate(lineptr[i], pattern, option);
