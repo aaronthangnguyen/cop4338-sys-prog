@@ -126,11 +126,16 @@ int main(int argc, char **argv)
 		if ((option & FIRST) && (first_occurrence != NULL))
 			sprintf(initial + strlen(initial), "@%d: ", first_occurrence - lineptr[i]);
 
+		// if (option & PARTIAL)
+		// 	lineptr[i] = truncate(lineptr[i], pattern, option);
 		// if except flag is up and pattern cannot be found in current line
 		// or if except flag is down and pattern can be found in the current line
 		if (((option & EXCEPT) != 0) != (first_occurrence != NULL))
-			printf("%s%s\n", initial, truncate(lineptr[i], pattern, option)); // print the line w/ number if numbered flag is raised
-																			  // printf("%s%s\n", initial, lineptr[i]); // print the line w/ number if numbered flag is raised
+			if (option & PARTIAL)
+				printf("%s%s\n", initial, truncate(lineptr[i], pattern, option)); // print the line w/ number if numbered flag is raised
+			else
+				printf("%s%s\n", initial, lineptr[i]); // print the line w/ number if numbered flag is raised
+													   // printf("%s%s\n", initial, lineptr[i]); // print the line w/ number if numbered flag is raised
 	}
 	return 0;
 }
