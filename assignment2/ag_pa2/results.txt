@@ -1,0 +1,111 @@
+
+
+			****************************
+
+-./01pa2:
+	--Test Case #0:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 in ]
+STDOUT:[
+I'm very interested in Computer Science!
+I'm in
+In-N-Out has great burgers in fact
+]
+	--Test Case #1:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -fmcr in ]
+STDOUT:[
+@14: Last sentence In
+@27: In-N-Out has great burgers in fact
+@4: I'm in
+@20: I'm very interested in Computer Science!
+]
+	--Test Case #2:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -xs in ]
+STDOUT:[
+Last sentence In
+This is a test statement
+]
+	--Test Case #3:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -pnm in ]
+STDOUT:[
+1. I'm very i...in...ence!
+3. I'm in
+4. In-N-Out h...in fact
+]
+	--Test Case #4:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -nr is ]
+STDOUT:[
+2. This is a test statement
+]
+	--Test Case #5:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -s -fm -c Is ]
+STDOUT:[
+@5: This is a test statement
+]
+	--Test Case #6:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence In
+]
+CLAs:[./01pa2 -pxsn is ]
+STDOUT:[
+fatal error: can't use -p and -x in the same execution
+
+]
+	--Test Case #7:
+STDIN:[
+I'm very interested in Computer Science!
+This is a test statement
+I'm in
+In-N-Out has great burgers in fact
+Last sentence is In
+]
+CLAs:[./01pa2 -sfc IS ]
+STDOUT:[
+@14: Last sentence is In
+@2: This is a test statement
+]
