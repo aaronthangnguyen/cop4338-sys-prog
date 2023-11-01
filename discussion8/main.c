@@ -24,7 +24,7 @@ void print_txt(char *str)
 int main()
 {
     char csv[MAX_SIZE][MAX_LEN];
-
+    printf("Enter CSV:\n");
     int i;
     for (i = 0; i < MAX_SIZE; i++)
     {
@@ -38,6 +38,7 @@ int main()
             csv[i][len - 1] = '\0';
     }
 
+    printf("Ouput TXT:\n");
     int size = i;
     for (int j = 0; j < size; j++)
     {
