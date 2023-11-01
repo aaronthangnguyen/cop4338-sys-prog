@@ -30,12 +30,13 @@ int main()
     {
         if (fgets(csv[i], sizeof(csv[i]), stdin) == NULL)
             break;
-        else if (strcmp(csv[i], "") == 0)
-            break;
 
         int len = strlen(csv[i]);
         if (len > 0 && csv[i][len - 1] == '\n')
             csv[i][len - 1] = '\0';
+
+        if (strcmp(csv[i], "") == 0)
+            break;
     }
 
     printf("Ouput TXT:\n");
