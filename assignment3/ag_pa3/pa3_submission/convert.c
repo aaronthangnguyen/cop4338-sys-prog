@@ -1,21 +1,16 @@
+#include "convert.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
 #define error(m, c)                 \
     do                              \
     {                               \
         fprintf(stderr, "%s\n", m); \
         exit(c);                    \
     } while (0)
-typedef enum
-{
-    NONE = 0,            // no flags are passed in CLAs
-    CLEAR = 1,           //-c
-    HEX = 1 << 1,        //-x
-    SCIENTIFIC = 1 << 2, //-e
-    TRUNCATED = 1 << 3,  //-s
-} flags;
+
 char *strip(char *input)
 {
     char *rv = (char *)malloc(strlen(input) + 1);
@@ -36,8 +31,7 @@ char *strip(char *input)
     strncpy(rv, input + left, right - left + 1);
     return rv;
 }
-int is_double(char *);
-int is_int(char *);
+
 int main(int argc, char *argv[])
 {
     flags flag = NONE; // combination of flags
@@ -107,6 +101,7 @@ int main(int argc, char *argv[])
     while (fgets(line, 1000, stdin))
     {
         char *delimiter = strcmp(in_fmt, "csv") == 0 ? "," : "\t";
+        char *separator = "";
         char *cell;
         int ival;
         double dval;
@@ -114,18 +109,41 @@ int main(int argc, char *argv[])
         cell = strtok(line, delimiter);
         while (cell)
         {
+            printf("%s", separator);
             // sscanf is like java.util.scanner that gets a String and tokenizes it...
-            if (sscanf(cell, "%d", &ival) && is_int(cell))          // is_int checks the entire cell for an int. If cell is not an int, returns 0, o.w. 1
-                printf("Integer cell: %d\n", ival);                 // use %x if -x is given by CLAs
+            if (sscanf(cell, "%d", &ival) && is_int(cell)) // is_int checks the entire cell for an int. If cell is not an int, returns 0, o.w. 1
+            {
+                if (flag & HEX)
+                    printf("%x", ival); // use %x if -x is given by CLAs
+                else
+                    printf("%s", cell);
+            }
             else if (sscanf(cell, "%lf", &dval) && is_double(cell)) // is_double checks the entire cell for a double. If cell is not a double, returns 0, o.w. 1
-                printf("Double cell: %f\n", dval);                  // use %.3e if -e is given by CLAs
+            {
+                if (flag & SCIENTIFIC)
+                    printf("%.3e", dval); // use %.3e if -e is given by CLAs
+                else
+                    printf("%s", cell);
+            }
             else
-                printf("String cell: [%s]\n", strip(cell)); // use %.5s if -s is given by CLAs
+            {
+                if (flag & CLEAR)
+                    cell = strip(cell);
+
+                if (flag & TRUNCATED)
+                    printf("%.5s", cell); // use %.5s if -s is given by CLAs
+                else
+                    printf("%s", cell);
+            }
+
             cell = strtok(NULL, delimiter);
+            separator = strcmp(in_fmt, "csv") == 0 ? "\t" : ",";
         }
+        printf("\n");
     }
     return 0; // no error occured!
 }
+
 int is_int(char *input)
 {
     // checks whether input can be a string representation of an int
@@ -136,6 +154,7 @@ int is_int(char *input)
             return 0;
     return 1;
 }
+
 char *tolower_str(char *input)
 {
     // lowers the case of characters in a string... it's called in is_double
@@ -145,6 +164,7 @@ char *tolower_str(char *input)
         rv[i++] = tolower(*input++);
     return rv[i] = '\0', rv;
 }
+
 int is_double(char *input)
 {
     // checks whether input can be a string representation of a double

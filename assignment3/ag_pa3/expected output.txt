@@ -1,0 +1,75 @@
+
+
+			****************************
+
+-./01convert:
+	--Test Case #0:
+STDIN:[
+12	-12.3	Hello World!
+   Sentence  
+23.	-23
+]
+CLAs:[./01convert ]
+STDOUT:[
+12,-12.3,Hello World!
+   Sentence  
+23.,-23
+]
+	--Test Case #1:
+STDIN:[
+12	-12.3	Hello World!
+  Sentence  
+23.	-23
+]
+CLAs:[./01convert -exs ]
+STDOUT:[
+c,-1.230e+01,Hello
+  Sen
+2.300e+01,ffffffe9
+]
+	--Test Case #2:
+STDIN:[
+12,-12.3,Hello World!
+Sentence  
+23.,-23
+]
+CLAs:[./01convert -i csv -o txt ]
+STDOUT:[
+12	-12.3	Hello World!
+Sentence  
+23.	-23
+]
+	--Test Case #3:
+STDIN:[
+12	   -12.3  	Hello World!
+  Sentence  
+23.	-23
+]
+CLAs:[./01convert -i txt -o csv -cs ]
+STDOUT:[
+12,-12.3,Hello
+Sente
+23.,-23
+]
+	--Test Case #4:
+STDIN:[
+1234v5	12e3	-12.34
+86r543	r12345
+.1e7	-123
+]
+CLAs:[./01convert -es -x ]
+STDOUT:[
+1234v,1.200e+04,-1.234e+01
+86r54,r1234
+1.000e+06,ffffff85
+]
+	--Test Case #5:
+STDIN:[
+	1		2	    3.123e3 		
+12	hello		  123g  		
+]
+CLAs:[./01convert -xcse ]
+STDOUT:[
+,1,,2,3.123e+03,,
+c,hello,,123g,,
+]
