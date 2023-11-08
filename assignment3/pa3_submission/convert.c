@@ -1,16 +1,21 @@
-#include "convert.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
 #define error(m, c)                 \
     do                              \
     {                               \
         fprintf(stderr, "%s\n", m); \
         exit(c);                    \
     } while (0)
-
+typedef enum
+{
+    NONE = 0,            // no flags are passed in CLAs
+    CLEAR = 1,           //-c
+    HEX = 1 << 1,        //-x
+    SCIENTIFIC = 1 << 2, //-e
+    TRUNCATED = 1 << 3,  //-s
+} flags;
 char *strip(char *input)
 {
     char *rv = (char *)malloc(strlen(input) + 1);
@@ -31,7 +36,8 @@ char *strip(char *input)
     strncpy(rv, input + left, right - left + 1);
     return rv;
 }
-
+int is_double(char *);
+int is_int(char *);
 int main(int argc, char *argv[])
 {
     flags flag = NONE; // combination of flags
@@ -97,49 +103,49 @@ int main(int argc, char *argv[])
         fprintf(stderr, "-s ");
     fprintf(stderr, "\n");
 
-    char line[1000]; // placeholder for a line
+    char line[1000];
     while (fgets(line, 1000, stdin))
     {
-        char *delimiter = strcmp(in_fmt, "csv") == 0 ? "," : "\t";
-        char *separator = "";
+        char *line_ptr = line;
+        char *input_delimiter = strcmp(in_fmt, "csv") == 0 ? "," : "\t";
+        char *ouput_delimiter = strcmp(in_fmt, "csv") == 0 ? "\t" : ",";
         char *cell;
         int ival;
         double dval;
-        line[strlen(line) - 1] = '\0'; // dropping the new line
-        cell = strtok(line, delimiter);
-        while (cell)
+
+        while (cell = strsep(&line_ptr, input_delimiter))
         {
-            printf("%s", separator);
-            // sscanf is like java.util.scanner that gets a String and tokenizes it...
-            if (sscanf(cell, "%d", &ival) && is_int(cell)) // is_int checks the entire cell for an int. If cell is not an int, returns 0, o.w. 1
+            if (cell != line)
+                printf("%s", ouput_delimiter);
+            if (strlen(cell) == 0)
+                continue;
+            if (flag & CLEAR)
+                cell = strip(cell);
+
+            if (sscanf(cell, "%d", &ival) && is_int(cell))
             {
                 if (flag & HEX)
-                    printf("%x", ival); // use %x if -x is given by CLAs
+                    printf("%x", ival);
                 else
-                    printf("%s", cell);
+                    printf("%d", ival);
             }
-            else if (sscanf(cell, "%lf", &dval) && is_double(cell)) // is_double checks the entire cell for a double. If cell is not a double, returns 0, o.w. 1
+            else if (sscanf(cell, "%lf", &dval) && is_double(cell))
             {
                 if (flag & SCIENTIFIC)
-                    printf("%.3e", dval); // use %.3e if -e is given by CLAs
+                {
+                    printf("%.3e", dval);
+                }
                 else
-                    printf("%s", cell);
+                    printf("%s", dval);
             }
             else
             {
-                if (flag & CLEAR)
-                    cell = strip(cell);
-
                 if (flag & TRUNCATED)
-                    printf("%.5s", cell); // use %.5s if -s is given by CLAs
+                    printf("%.5s", cell);
                 else
-                    printf("%s", cell);
+                    printf("%s\n", cell);
             }
-
-            cell = strtok(NULL, delimiter);
-            separator = strcmp(in_fmt, "csv") == 0 ? "\t" : ",";
         }
-        printf("\n");
     }
     return 0; // no error occured!
 }
