@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
     while (fgets(line, 1000, stdin))
     {
         char *line_ptr = line;
+        line[strlen(line) - 1] = '\0';
         char *input_delimiter = strcmp(in_fmt, "csv") == 0 ? "," : "\t";
         char *ouput_delimiter = strcmp(in_fmt, "csv") == 0 ? "\t" : ",";
         char *cell;
@@ -145,6 +146,7 @@ int main(int argc, char *argv[])
                 else
                     printf("%s\n", cell);
             }
+            printf("\n");
         }
     }
     return 0; // no error occured!
