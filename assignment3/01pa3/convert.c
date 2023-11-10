@@ -146,8 +146,8 @@ int main(int argc, char *argv[])
                 else
                     printf("%s\n", cell);
             }
-            printf("\n");
         }
+        printf("\n");
     }
     return 0; // no error occured!
 }
