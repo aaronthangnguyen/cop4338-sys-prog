@@ -59,10 +59,7 @@ void *consumer(void *args)
         sprintf(password, "%s,%s", password, random_word);
     }
 
-    if (i < (k / m) - 1)
-      printf("%s\n", password);
-    else
-      printf("%s", password);
+    printf("%s\n", password);
   }
   return NULL;
 }
