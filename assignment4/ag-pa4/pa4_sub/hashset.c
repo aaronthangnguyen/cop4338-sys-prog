@@ -1,21 +1,24 @@
 #include "hash.h"
-hashset set_init() {
+hashset set_init()
+{
   hashset h = {(node **)malloc(BINS * sizeof(node *)), 0, BINS};
   for (int i = 0; i < BINS; i++)
     h.table[i] = NULL;
   return h;
 }
-static int hash(char *key, int bins) {
+static int hash(char *key, int bins)
+{
   unsigned hashval = 0;
   for (int i = 0; i < strlen(key); i++)
     hashval = 31 * hashval + key[i];
   return hashval % bins;
 }
 static void rehash(hashset *);
-int insert(hashset *h, char *val) {
-  if (search(*h, val))    // I found the value
-    return 0;             // duplicate
-  if (h->size >= h->bins) // load factor >= 100%
+int insert(hashset *h, char *val)
+{
+  if (search_value(*h, val)) // I found the value
+    return 0;                // duplicate
+  if (h->size >= h->bins)    // load factor >= 100%
     rehash(h);
   int index = hash(val, h->bins);
   node *new_element = (node *)malloc(sizeof(node));
@@ -25,15 +28,19 @@ int insert(hashset *h, char *val) {
   h->size++;
   return 1;
 }
-int delete_value(hashset *h, char *value) {
+int delete_value(hashset *h, char *value)
+{
   unsigned index = hash(value, h->bins);
   node *head = h->table[index];
   if (!head)
     return 0; // doesn't exist! unsuccessful
-  else if (!strcmp(head->value, value)) {
+  else if (!strcmp(head->value, value))
+  {
     h->table[index] = head->next;
     free(head);
-  } else {
+  }
+  else
+  {
     node *prev = head;
     for (head = head->next; head; head = head->next)
       if (!strcmp(head->value, value))
@@ -48,12 +55,15 @@ int delete_value(hashset *h, char *value) {
   h->size--;
   return 1; // successful
 }
-static int next_prime(int min) {
-  while (1) {
+static int next_prime(int min)
+{
+  while (1)
+  {
     int prime = 1;
     for (int div = 2; div <= sqrt(min); div++)
-      if (min % div == 0) { // divisible by div
-        prime = 0;          // not prime
+      if (min % div == 0)
+      {            // divisible by div
+        prime = 0; // not prime
         break;
       }
     if (prime)
@@ -63,7 +73,8 @@ static int next_prime(int min) {
   }
   return min;
 }
-static void rehash(hashset *h) {
+static void rehash(hashset *h)
+{
   int next_size = next_prime(2 * h->bins);
   fprintf(stderr, "Warning: rehashing from size %d to size %d\n", h->bins,
           next_size);
@@ -75,15 +86,19 @@ static void rehash(hashset *h) {
     h->table[i] = NULL;
   h->size = 0;
   h->bins = next_size;
-  for (int i = 0; i < old_bins; i++) {
-    for (node *it = oldtable[i]; it; it = it->next) {
+  for (int i = 0; i < old_bins; i++)
+  {
+    for (node *it = oldtable[i]; it; it = it->next)
+    {
       insert(h, it->value);
     }
   }
 }
-int search(hashset h, char *val) {
+int search_value(hashset h, char *val)
+{
   int index = hash(val, h.bins);
-  for (node *iterator = h.table[index]; iterator; iterator = iterator->next) {
+  for (node *iterator = h.table[index]; iterator; iterator = iterator->next)
+  {
     if (!strcmp(iterator->value, val))
       return 1;
   }
