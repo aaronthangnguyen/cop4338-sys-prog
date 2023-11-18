@@ -59,7 +59,9 @@ void *consumer(void *args)
         sprintf(password, "%s,%s", password, random_word);
     }
 
-    printf("%s\n", password);
+    if (i != 0)
+      printf("\n");
+    printf("%s", password);
   }
   return NULL;
 }
