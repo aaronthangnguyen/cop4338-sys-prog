@@ -1,0 +1,58 @@
+
+
+			****************************
+
+-./01passgenerator:
+	--Test Case #0:
+STDIN:[
+
+]
+CLAs:[./01passgenerator -p 2 -c 2 -f dict.txt -n 10 -l 4 ]
+STDOUT:[
+arabist,rhiptoglossa,kirchner,secernment
+platte,bethlehem-judah,bacteroidal,trimness
+ensnare,honeybells,disgusted,consternation
+widal's,robespierre,set-back,cultivator
+owl,ed,holothurian,parallelopiped
+clomp,terrietia,senescent,boatswain's
+lakefront,limicolae,dairymaid,analgesia
+loxapine,solanaceous,monsieur,hysertia
+lichi,seven-spot,bouviers,urolith
+eighty-fifth,dindymene,chromic,nonstarter
+]
+	--Test Case #1:
+STDIN:[
+
+]
+CLAs:[./01passgenerator -p 4 -c 4 -f dict.txt -n 12 -l 4 ]
+STDOUT:[
+hemorrhoid,scrubbiness,aleph,ideally
+bruckenthalia,jack-a-lantern,pond-scum,heming
+contemporary,disturb,cloveroot,ennead
+bouchee,lowboy,shebeen,pusilla
+cardcase,singular,acetone,cordell
+przevalskii,dyslogia,joist,intermittency
+barberini,tenanted,anglophobia,listlessness
+orientalise,nimiety,amicable,mollah
+urobilin,insensitivity,trick,reciprocally
+axil,table,high-sudsing,fragrance
+churchwarden,mightiness,non,judah
+setswana,parotitis,fount,minatory
+]
+	--Test Case #2:
+STDIN:[
+
+]
+CLAs:[./01passgenerator -p 2 -c 2 -f dict.txt -n 10 -l 6 ]
+STDOUT:[
+topv,unshackled,var,enveloping,cement,sphaeriaceae
+meshugga,idea,lepanto,alfileria,mujahidin,cheep
+ionization,penn'orth,comfit,bezique,squawker,burhinidae
+clavipes,manatus,menorah,tafari,boozer,pleuronectidae
+nonracial,toilet-train,attar,oversleep,apophyseal,biryani
+gorget,engraved,muraenidae,psalterium,chenopodiaceae,cinematize
+gallinacean,demasculinise,redundance,dc,eumeces,salvage
+fireplace,fagot,oversensitive,latten,croak,praya
+guilt,wilderness,equinus,arianrod,subalpine,socotra
+blueweed,indicate,pucker,buttons,emmetropic,drugs
+]
