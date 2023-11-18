@@ -40,7 +40,7 @@ void *consumer(void *args)
   char password[25 * l];
   for (int i = 0; i < k / m; i++)
   {
-    password[0] = '\0'; // Fix: Initialize the password string for each iteration
+    password[0] = '\0';
     for (int j = 0; j < l; j++)
     {
       char *random_word = words[rand() % N];
@@ -59,9 +59,10 @@ void *consumer(void *args)
         sprintf(password, "%s,%s", password, random_word);
     }
 
-    if (i != 0)
-      printf("\n");
-    printf("%s", password);
+    if (i < (k / m) - 1)
+      printf("%s\n", password);
+    else
+      printf("%s", password);
   }
   return NULL;
 }
