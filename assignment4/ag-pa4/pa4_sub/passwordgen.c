@@ -26,8 +26,9 @@ void *producer(void *args)
   {
     pthread_mutex_lock(&mutex);
     insert(&h, words[j]);
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_unlock(&mutex);
   }
+  return NULL;
 }
 
 static int m; // number of consumer threads
@@ -39,6 +40,7 @@ void *consumer(void *args)
   char password[25 * l];
   for (int i = 0; i < k / m; i++)
   {
+    password[0] = '\0'; // Fix: Initialize the password string for each iteration
     for (int j = 0; j < l; j++)
     {
       char *random_word = words[rand() % N];
@@ -59,6 +61,7 @@ void *consumer(void *args)
 
     printf("%s\n", password);
   }
+  return NULL;
 }
 
 int main(int argc, char **argv)
@@ -124,13 +127,13 @@ int main(int argc, char **argv)
 
   // PRODUCTION PHASE
   pthread_t producer_thread_id[n];
+  producer_task tasks[n];
 
   for (int i = 0; i < n; i++)
   {
-    producer_task args;
-    args.from_index = i * (N / n);
-    args.to_index = (i + 1) * (N / n) - 1;
-    pthread_create(producer_thread_id[i], NULL, producer, (void *)&args);
+    tasks[i].from_index = i * (N / n);
+    tasks[i].to_index = (i + 1) * (N / n) - 1;
+    pthread_create(&producer_thread_id[i], NULL, producer, (void *)&tasks[i]);
   }
 
   for (int i = 0; i < n; i++)
@@ -140,7 +143,7 @@ int main(int argc, char **argv)
   pthread_t consumer_thread_id[m];
 
   for (int i = 0; i < m; i++)
-    pthread_create(consumer_thread_id[i], NULL, consumer, NULL);
+    pthread_create(&consumer_thread_id[i], NULL, consumer, NULL);
 
   for (int i = 0; i < m; i++)
     pthread_join(consumer_thread_id[i], NULL);
