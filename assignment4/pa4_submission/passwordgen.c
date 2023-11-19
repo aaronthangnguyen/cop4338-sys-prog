@@ -147,5 +147,7 @@ int main(int argc, char **argv)
 
   for (int i = 0; i < m; i++)
     pthread_join(consumer_thread_id[i], NULL);
+
+  pthread_mutex_destroy(&mutex);
   return 0;
 }
