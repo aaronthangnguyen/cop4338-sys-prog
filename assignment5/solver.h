@@ -36,9 +36,13 @@ typedef struct tnode tnode; // tnode is my binary tree node typedef
 
 typedef struct
 {
+  int t_id;
+  hashset *dict;
   char **sub_puzzle;
   int subpuzzle_rows;
   int subpuzzle_cols;
+  int min_len;
+  int max_len;
 } solve_args;
 
 // hash set functions

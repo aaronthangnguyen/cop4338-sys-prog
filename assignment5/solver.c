@@ -2,10 +2,132 @@
 
 #define BUFFER_SIZE 50
 
+void reverse(char *str)
+{
+	int l = 0;
+	int r = strlen(str) - 1;
+	while (l < r)
+	{
+		char temp = str[l];
+		str[l] = str[r];
+		str[r] = temp;
+		l++;
+		r--;
+	}
+}
+
 void *solve(void *arg)
 {
-	// your code here
-	fprintf(stderr, "solver thread: %s\n", (char *)arg);
+	solve_args *args = (solve_args *)arg;
+
+	// Search horizontally
+	for (int i = 0; i < args->subpuzzle_rows; i++)
+	{
+		for (int j = 0; j < args->subpuzzle_cols; j++)
+		{
+			char *word = (char *)malloc(args->subpuzzle_cols + 1);
+			for (int k = 0; k < args->subpuzzle_cols - j; k++)
+			{
+				word[k] = args->sub_puzzle[i][j + k];
+				int len = strlen(word);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + 1, j + k + 1);
+				}
+				// Check backwards
+				reverse(word);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + k + 1, j + 1);
+				}
+				// Revert to normal order
+				reverse(word);
+			}
+			free(word);
+		}
+	}
+
+	// Search vertically
+	for (int i = 0; i < args->subpuzzle_rows; i++)
+	{
+		for (int j = 0; j < args->subpuzzle_cols; j++)
+		{
+			char *word = (char *)malloc(args->subpuzzle_rows + 1);
+			for (int k = 0; k < args->subpuzzle_rows - i; k++)
+			{
+				word[k] = args->sub_puzzle[i + k][j];
+				int len = strlen(word);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + k + 1, j + 1, j + 1);
+				}
+				// Check backwards
+				reverse(word);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + k + 1, i + 1, j + 1, j + 1);
+				}
+				// Revert to normal order
+				reverse(word);
+			}
+			free(word);
+		}
+	}
+
+	// Search diagonally
+	for (int i = 0; i < args->subpuzzle_rows; i++)
+	{
+		for (int j = 0; j < args->subpuzzle_cols; j++)
+		{
+			// Diagonal pointing down
+			char *word_down = (char *)malloc(args->subpuzzle_cols + 1);
+			// Diagonal pointing up
+			char *word_up = (char *)malloc(args->subpuzzle_cols + 1);
+
+			// Diagonal down
+			for (int k = 0; k < args->subpuzzle_rows - i && k < args->subpuzzle_cols - j; k++)
+			{
+				word_down[k] = args->sub_puzzle[i + k][j + k];
+				int len = strlen(word_down);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_down))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + 1, i + k + 1, j + 1, j + k + 1);
+				}
+				// Check backwards
+				reverse(word_down);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_down))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + k + 1, i + 1, j + k + 1, j + 1);
+				}
+				// Revert to normal order
+				reverse(word_down);
+			}
+
+			// Diagonal up
+			for (int k = 0; k < i + 1 && k < args->subpuzzle_cols - j; k++)
+			{
+				word_up[k] = args->sub_puzzle[i - k][j + k];
+				int len = strlen(word_up);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_up))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i + 1, i - k + 1, j + 1, j + k + 1);
+				}
+				// Check backwards
+				reverse(word_up);
+				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_up))
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i - k + 1, i + 1, j + k + 1, j + 1);
+				}
+				// Revert to normal order
+				reverse(word_up);
+			}
+
+			free(word_down);
+			free(word_up);
+		}
+	}
+
+	return NULL;
 }
 
 void print_buffer(char **sub_puzzle, int subpuzzle_rows, int subpuzzle_cols)
@@ -103,10 +225,9 @@ int main(int argc, char **argv)
 	}
 
 	// Read and move all words from dictionary_file to a new hash table (hashset)
-	hashset set = set_init();
-	if (read_dictionary(&set, dictionary_file)) // if error, exit
+	hashset dict = set_init();
+	if (read_dictionary(&dict, dictionary_file)) // if error, exit
 		return 1;
-	close(fd);
 
 	// allocate 64MB of buffer in the heap
 	// buffer is a 3D array
@@ -150,11 +271,15 @@ int main(int argc, char **argv)
 
 			// modify these lines so that you can create and start a solver thread
 			// after passing the right information to it...
-			fprintf(stderr, "Consuming buffer #%d\n", buf_index);
-			char *message = (char *)malloc(1000);
-			sprintf(message, "solving sub-puzzle of dimensions %d by %d located at index (%d,%d).",
-					subpuzzle_rows, subpuzzle_cols, row, column);
-			pthread_create(t_id + buf_index, NULL, solve, message);
+			solve_args *args = (solve_args *)malloc(sizeof(solve_args));
+			args->t_id = buf_index;
+			args->dict = &dict;
+			args->sub_puzzle = buffer[buf_index];
+			args->subpuzzle_rows = subpuzzle_rows;
+			args->subpuzzle_cols = subpuzzle_cols;
+			args->min_len = min_len;
+			args->max_len = max_len;
+			pthread_create(t_id + buf_index, NULL, solve, args);
 			// print_buffer(buffer[buf_index], subpuzzle_rows, subpuzzle_cols);
 
 			// end of modification
@@ -165,9 +290,7 @@ int main(int argc, char **argv)
 		if (t_id[i])
 			pthread_join(t_id[i], NULL);
 
-	if (sorted)
-	{
-		// print the binary search tree using in-order traversal...
-		// your code here...
-	}
+	// if (sorted)
+	// {
+	// }
 }
