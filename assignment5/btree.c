@@ -20,9 +20,10 @@ void inorder_print(tnode *root)
 	if (root == NULL)
 		return;
 	inorder_print(root->left);	// visiting the left substree
-	printf("%s ", root->value); // visitig the root
+	printf("%s", root->value);	// visitig the root
 	inorder_print(root->right); // visiting the left substree
 }
+
 int bst_insert(tnode **root_p, char *val)
 {
 	if ((*root_p) == NULL)

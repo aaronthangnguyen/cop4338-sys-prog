@@ -1,6 +1,7 @@
 #include "solver.h"
 
 #define BUFFER_SIZE 50
+#define MESSAGE_SIZE 100
 
 void reverse(char *str)
 {
@@ -32,13 +33,37 @@ void *solve(void *arg)
 				int len = strlen(word);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + 1, j + k + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + 1, j + k + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Check backwards
 				reverse(word);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + k + 1, j + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + 1, j + k + 1, j + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Revert to normal order
 				reverse(word);
@@ -59,13 +84,42 @@ void *solve(void *arg)
 				int len = strlen(word);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + k + 1, j + 1, j + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + 1, i + k + 1, j + 1, j + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Check backwards
 				reverse(word);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + k + 1, i + 1, j + 1, j + 1);
+					word[k] = args->sub_puzzle[i + k][j];
+					int len = strlen(word);
+					if (len >= args->min_len && len <= args->max_len && search(*args->dict, word))
+					{
+						char *message = malloc(MESSAGE_SIZE * sizeof(char));
+						sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word, args->t_id, i + k + 1, i + 1, j + 1, j + 1);
+						if (args->sorted)
+						{
+							pthread_mutex_lock(args->bst_mutex);
+							bst_insert(args->bst_root, message);
+							pthread_mutex_unlock(args->bst_mutex);
+						}
+						else
+						{
+							printf("%s", message);
+							free(message);
+						}
+					}
 				}
 				// Revert to normal order
 				reverse(word);
@@ -91,13 +145,37 @@ void *solve(void *arg)
 				int len = strlen(word_down);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_down))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + 1, i + k + 1, j + 1, j + k + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + 1, i + k + 1, j + 1, j + k + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Check backwards
 				reverse(word_down);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_down))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + k + 1, i + 1, j + k + 1, j + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word_down, args->t_id, i + k + 1, i + 1, j + k + 1, j + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Revert to normal order
 				reverse(word_down);
@@ -110,13 +188,37 @@ void *solve(void *arg)
 				int len = strlen(word_up);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_up))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i + 1, i - k + 1, j + 1, j + k + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i + 1, i - k + 1, j + 1, j + k + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Check backwards
 				reverse(word_up);
 				if (len >= args->min_len && len <= args->max_len && search(*args->dict, word_up))
 				{
-					printf("%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i - k + 1, i + 1, j + k + 1, j + 1);
+					char *message = malloc(MESSAGE_SIZE * sizeof(char));
+					sprintf(message, "%s\t%d\t%d:%d\t%d:%d\n", word_up, args->t_id, i - k + 1, i + 1, j + k + 1, j + 1);
+					if (args->sorted)
+					{
+						pthread_mutex_lock(args->bst_mutex);
+						bst_insert(args->bst_root, message);
+						pthread_mutex_unlock(args->bst_mutex);
+					}
+					else
+					{
+						printf("%s", message);
+						free(message);
+					}
 				}
 				// Revert to normal order
 				reverse(word_up);
@@ -127,7 +229,7 @@ void *solve(void *arg)
 		}
 	}
 
-	return NULL;
+	pthread_exit(NULL);
 }
 
 void print_buffer(char **sub_puzzle, int subpuzzle_rows, int subpuzzle_cols)
@@ -229,6 +331,12 @@ int main(int argc, char **argv)
 	if (read_dictionary(&dict, dictionary_file)) // if error, exit
 		return 1;
 
+	// Create BST root
+	tnode **bst_root = (tnode **)malloc(sizeof(tnode *));
+	*bst_root = NULL;
+	pthread_mutex_t bst_mutex;
+	pthread_mutex_init(&bst_mutex, NULL);
+
 	// Print headings
 	printf("word\tTID\tLnSpan\tColSpan\n");
 
@@ -275,11 +383,14 @@ int main(int argc, char **argv)
 			solve_args *args = (solve_args *)malloc(sizeof(solve_args));
 			args->t_id = buf_index;
 			args->dict = &dict;
+			args->bst_root = bst_root;
+			args->bst_mutex = &bst_mutex;
 			args->sub_puzzle = buffer[buf_index];
 			args->subpuzzle_rows = subpuzzle_rows;
 			args->subpuzzle_cols = subpuzzle_cols;
 			args->min_len = min_len;
 			args->max_len = max_len;
+			args->sorted = sorted;
 			pthread_create(t_id + buf_index, NULL, solve, args);
 			buf_index = (buf_index == buf_cells - 1) ? 0 : buf_index + 1;
 		}
@@ -288,7 +399,6 @@ int main(int argc, char **argv)
 		if (t_id[i])
 			pthread_join(t_id[i], NULL);
 
-	// if (sorted)
-	// {
-	// }
+	if (sorted)
+		inorder_print(*bst_root);
 }

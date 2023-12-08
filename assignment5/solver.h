@@ -38,11 +38,14 @@ typedef struct
 {
   int t_id;
   hashset *dict;
+  tnode **bst_root;
+  pthread_mutex_t *bst_mutex;
   char **sub_puzzle;
   int subpuzzle_rows;
   int subpuzzle_cols;
   int min_len;
   int max_len;
+  int sorted;
 } solve_args;
 
 // hash set functions
