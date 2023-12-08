@@ -26,7 +26,7 @@ void *solve(void *arg)
 		for (int j = 0; j < args->subpuzzle_cols; j++)
 		{
 			char *word = (char *)malloc(args->subpuzzle_cols + 1);
-			for (int k = 0; k < args->subpuzzle_cols - j; k++)
+			for (int k = 0; k < args->subpuzzle_cols - j && strlen(word) < args->max_len; k++)
 			{
 				word[k] = args->sub_puzzle[i][j + k];
 				int len = strlen(word);
@@ -53,7 +53,7 @@ void *solve(void *arg)
 		for (int j = 0; j < args->subpuzzle_cols; j++)
 		{
 			char *word = (char *)malloc(args->subpuzzle_rows + 1);
-			for (int k = 0; k < args->subpuzzle_rows - i; k++)
+			for (int k = 0; k < args->subpuzzle_rows - i && strlen(word) < args->max_len; k++)
 			{
 				word[k] = args->sub_puzzle[i + k][j];
 				int len = strlen(word);
@@ -85,7 +85,7 @@ void *solve(void *arg)
 			char *word_up = (char *)malloc(args->subpuzzle_cols + 1);
 
 			// Diagonal down
-			for (int k = 0; k < args->subpuzzle_rows - i && k < args->subpuzzle_cols - j; k++)
+			for (int k = 0; k < args->subpuzzle_rows - i && k < args->subpuzzle_cols - j && strlen(word_down) < args->max_len; k++)
 			{
 				word_down[k] = args->sub_puzzle[i + k][j + k];
 				int len = strlen(word_down);
@@ -104,7 +104,7 @@ void *solve(void *arg)
 			}
 
 			// Diagonal up
-			for (int k = 0; k < i + 1 && k < args->subpuzzle_cols - j; k++)
+			for (int k = 0; k < i + 1 && k < args->subpuzzle_cols - j && strlen(word_up) < args->max_len; k++)
 			{
 				word_up[k] = args->sub_puzzle[i - k][j + k];
 				int len = strlen(word_up);
@@ -229,6 +229,9 @@ int main(int argc, char **argv)
 	if (read_dictionary(&dict, dictionary_file)) // if error, exit
 		return 1;
 
+	// Print headings
+	printf("word\tTID\tLnSpan\tColSpan\n");
+
 	// allocate 64MB of buffer in the heap
 	// buffer is a 3D array
 	// on the outermost dimension, we have buf_cells elements
@@ -269,8 +272,6 @@ int main(int argc, char **argv)
 			if (subpuzzle_rows < buf_dimension)
 				buffer[buf_index][subpuzzle_rows] = NULL;
 
-			// modify these lines so that you can create and start a solver thread
-			// after passing the right information to it...
 			solve_args *args = (solve_args *)malloc(sizeof(solve_args));
 			args->t_id = buf_index;
 			args->dict = &dict;
@@ -280,9 +281,6 @@ int main(int argc, char **argv)
 			args->min_len = min_len;
 			args->max_len = max_len;
 			pthread_create(t_id + buf_index, NULL, solve, args);
-			// print_buffer(buffer[buf_index], subpuzzle_rows, subpuzzle_cols);
-
-			// end of modification
 			buf_index = (buf_index == buf_cells - 1) ? 0 : buf_index + 1;
 		}
 	}
